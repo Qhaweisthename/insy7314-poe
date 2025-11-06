@@ -6,33 +6,38 @@ orbs:
 jobs:
   build-and-scan:
     docker:
-      - image: cimg/node:22.12.0 # Node 22 LTS
+      - image: cimg/node:22.12.0
+    working_directory: ~/project/Payment-Portal/Backend  # 👈 FIXED path to backend
     steps:
       - checkout
 
       # 🧰 Install dependencies
       - node/install-packages:
           pkg-manager: npm
+          app-dir: Payment-Portal/Backend  # 👈 tell node orb where package.json is
 
-      # 🧹 Run ESLint for static code analysis
+      # 🧹 Run ESLint for static analysis
       - run:
           name: Run ESLint
           command: |
+            cd Payment-Portal/Backend
             npx eslint . || echo "No ESLint config found"
 
-      # 🧪 Run tests (you can replace this with real tests later)
+      # 🧪 Run test placeholder
       - run:
           name: Run Test Scripts
           command: |
+            cd Payment-Portal/Backend
             npm test || echo "No test scripts defined"
 
       # 🔍 Run SonarCloud scan
       - run:
           name: Run SonarCloud Code Scan
           command: |
+            cd ~/project
             npx sonar-scanner \
-              -Dsonar.projectKey=insy7314-payment-portal \
-              -Dsonar.organization=${SONAR_ORG} \
+              -Dsonar.projectKey=insy7314-poe \
+              -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
 
