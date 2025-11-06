@@ -52,7 +52,7 @@ jobs:
             unzip sonar-scanner.zip
             chmod +x sonar-scanner-*/bin/sonar-scanner
             ./sonar-scanner-*/bin/sonar-scanner \
-              -Dsonar.projectKey=insy7314-poe \
+              -Dsonar.projectKey=Qhaweistthename_insy7314-poe \
               -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
