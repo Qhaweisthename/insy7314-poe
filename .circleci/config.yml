@@ -11,12 +11,12 @@ jobs:
     steps:
       - checkout
 
-      # 🧰 Install Node dependencies
+      # Install Dependencies
       - node/install-packages:
           pkg-manager: npm
           app-dir: Payment-Portal/Backend
 
-      # 🧹 Static Code Analysis with ESLint
+      # Run ESLint
       - run:
           name: Run ESLint
           command: |
@@ -24,7 +24,7 @@ jobs:
             npx eslint . || echo "No ESLint configuration found"
           when: always
 
-      # 🧪 Unit Tests (placeholder)
+      # Run Test Scripts
       - run:
           name: Run Test Scripts
           command: |
@@ -32,31 +32,23 @@ jobs:
             npm test || echo "No test scripts defined"
           when: always
 
-      # 📦 Archive logs (for PoE evidence)
+      # Upload Logs
       - run:
           name: Save Build Logs
           command: |
             mkdir -p ~/project/logs
-            echo "ESLint and Test results saved at $(date)" > ~/project/logs/build-log.txt
-            echo "----------------------------------------" >> ~/project/logs/build-log.txt
-            ls ~/project/Payment-Portal/Backend >> ~/project/logs/build-log.txt
-            echo "\nCompleted Build and Analysis ✅" >> ~/project/logs/build-log.txt
-
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - logs
-
+            echo "Build completed at $(date)" > ~/project/logs/build-log.txt
+            ls Payment-Portal/Backend >> ~/project/logs/build-log.txt
       - store_artifacts:
           path: ~/project/logs
           destination: build-logs
 
-      # 🔍 SonarCloud Analysis
+      # ✅ Fix for SonarCloud "Permission denied" issue
       - run:
-          name: Run SonarCloud Code Scan
+          name: Install and Run SonarCloud Scanner
           command: |
-            cd ~/project
-            npx sonar-scanner \
+            sudo npm install -g sonar-scanner
+            sonar-scanner \
               -Dsonar.projectKey=insy7314-poe \
               -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
