@@ -32,7 +32,7 @@ jobs:
             npm test || echo "No test scripts defined"
           when: always
 
-            # Upload Logs
+      # Upload Logs
       - run:
           name: Save Build Logs
           command: |
@@ -43,7 +43,7 @@ jobs:
           path: ~/project/logs
           destination: build-logs
 
-      # ✅ Fix for Sonar Scanner Permission Denied
+      # ✅ SonarCloud Scanner Step
       - run:
           name: Download and Run SonarCloud Scanner
           command: |
@@ -52,12 +52,11 @@ jobs:
             unzip sonar-scanner.zip
             chmod +x sonar-scanner-*/bin/sonar-scanner
             ./sonar-scanner-*/bin/sonar-scanner \
-              -Dsonar.projectKey=insy7314-poe \
+              -Dsonar.projectKey=Qhaweistthename_insy7314-poe \
               -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
           when: always
-
 
 workflows:
   version: 2
