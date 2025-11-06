@@ -32,7 +32,7 @@ jobs:
             npm test || echo "No test scripts defined"
           when: always
 
-      # Upload Logs
+            # Upload Logs
       - run:
           name: Save Build Logs
           command: |
@@ -43,17 +43,21 @@ jobs:
           path: ~/project/logs
           destination: build-logs
 
-      # ✅ Fix for SonarCloud "Permission denied" issue
+      # ✅ Fix for Sonar Scanner Permission Denied
       - run:
-          name: Install and Run SonarCloud Scanner
+          name: Download and Run SonarCloud Scanner
           command: |
-            sudo npm install -g sonar-scanner
-            sonar-scanner \
+            cd ~/project
+            curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+            unzip sonar-scanner.zip
+            chmod +x sonar-scanner-*/bin/sonar-scanner
+            ./sonar-scanner-*/bin/sonar-scanner \
               -Dsonar.projectKey=insy7314-poe \
               -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
           when: always
+
 
 workflows:
   version: 2
