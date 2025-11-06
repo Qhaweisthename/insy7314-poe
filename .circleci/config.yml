@@ -6,30 +6,38 @@ orbs:
 jobs:
   build-and-scan:
     docker:
-      - image: cimg/node:22.12.0  # Node version you're using
+      - image: cimg/node:22.12.0 # Node 22 LTS
     steps:
       - checkout
+
+      # 🧰 Install dependencies
       - node/install-packages:
           pkg-manager: npm
+
+      # 🧹 Run ESLint for static code analysis
       - run:
-          name: Run ESLint (basic static check)
+          name: Run ESLint
           command: |
-            npx eslint . || true
+            npx eslint . || echo "No ESLint config found"
+
+      # 🧪 Run tests (you can replace this with real tests later)
       - run:
-          name: Run basic tests
+          name: Run Test Scripts
           command: |
-            npm test || echo "No tests defined"
+            npm test || echo "No test scripts defined"
+
+      # 🔍 Run SonarCloud scan
       - run:
-          name: Run SonarCloud scan
+          name: Run SonarCloud Code Scan
           command: |
             npx sonar-scanner \
-              -Dsonar.projectKey=payment-portal \
+              -Dsonar.projectKey=insy7314-payment-portal \
               -Dsonar.organization=${SONAR_ORG} \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
 
 workflows:
   version: 2
-  build:
+  secure-pipeline:
     jobs:
       - build-and-scan
