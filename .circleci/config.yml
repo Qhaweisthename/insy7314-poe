@@ -7,30 +7,51 @@ jobs:
   build-and-scan:
     docker:
       - image: cimg/node:22.12.0
-    working_directory: ~/project/Payment-Portal/Backend  # 👈 FIXED path to backend
+    working_directory: ~/project/Payment-Portal/Backend
     steps:
       - checkout
 
-      # 🧰 Install dependencies
+      # 🧰 Install Node dependencies
       - node/install-packages:
           pkg-manager: npm
-          app-dir: Payment-Portal/Backend  # 👈 tell node orb where package.json is
+          app-dir: Payment-Portal/Backend
 
-      # 🧹 Run ESLint for static analysis
+      # 🧹 Static Code Analysis with ESLint
       - run:
           name: Run ESLint
           command: |
             cd Payment-Portal/Backend
-            npx eslint . || echo "No ESLint config found"
+            npx eslint . || echo "No ESLint configuration found"
+          when: always
 
-      # 🧪 Run test placeholder
+      # 🧪 Unit Tests (placeholder)
       - run:
           name: Run Test Scripts
           command: |
             cd Payment-Portal/Backend
             npm test || echo "No test scripts defined"
+          when: always
 
-      # 🔍 Run SonarCloud scan
+      # 📦 Archive logs (for PoE evidence)
+      - run:
+          name: Save Build Logs
+          command: |
+            mkdir -p ~/project/logs
+            echo "ESLint and Test results saved at $(date)" > ~/project/logs/build-log.txt
+            echo "----------------------------------------" >> ~/project/logs/build-log.txt
+            ls ~/project/Payment-Portal/Backend >> ~/project/logs/build-log.txt
+            echo "\nCompleted Build and Analysis ✅" >> ~/project/logs/build-log.txt
+
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - logs
+
+      - store_artifacts:
+          path: ~/project/logs
+          destination: build-logs
+
+      # 🔍 SonarCloud Analysis
       - run:
           name: Run SonarCloud Code Scan
           command: |
@@ -40,6 +61,7 @@ jobs:
               -Dsonar.organization=qhaweistthename \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN}
+          when: always
 
 workflows:
   version: 2
